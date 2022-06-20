@@ -7,7 +7,7 @@
 using namespace std;
 #define MIN -10000
 #define MAX 10000
-
+//try
 enum SPOT_STATE {
     EMPTY = 0,
     BLACK = 1,
