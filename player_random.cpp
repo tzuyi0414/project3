@@ -57,11 +57,9 @@ void write_valid_spot(ofstream& fout) {
 
 Move get_state(int x,int y)
 {
-    int count=0,val_3;
+    int count=0,val_3=0,val_4=0,val_5=0;
     int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
-    Move bestMove;
-    bestMove.col=-1;
-    bestMove.row=-1;
+    Move state_player, state_opponent;
 
     if(board[x][y]==player)
     {
@@ -132,8 +130,183 @@ Move get_state(int x,int y)
 
         val_3 += row_tmp + col_tmp + dia_LUP + dia_RUP;
 
-        
+        if(val_3 != 0)
+        {
+            if(row_tmp != 0) //check there are continuous 4 or 5 chesses in row or not
+            {
+                int j=1; //check the right way of the row
+                int newy=y+j;
+                if(legal_position(x,newy))
+                {
+                    if(board[x][newy]==player)  //4 cont. chesses
+                    {
+                        if(board[x][newy+1]==player)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int j=-1;   //check the left way of the row
+                int newy=y+j;
+                if(legal_position(x,newy))
+                {
+                    if(board[x][newy]==player)  //4 cont. chesses
+                    {
+                        if(board[x][newy-1]==player)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+
+            if(col_tmp != 0) //check there are continuous 4 or 5 chesses in column or not
+            {
+                int i=1; //check the right way of the col
+                int newx=x+i;
+                if(legal_position(newx,y))
+                {
+                    if(board[newx][y]==player)  //4 cont. chesses
+                    {
+                        if(board[newx+1][y]==player)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int i=-1;   //check the left way of the row
+                int newx=x+i;
+                if(legal_position(newx,y))
+                {
+                    if(board[newx][y]==player)  //4 cont. chesses
+                    {
+                        if(board[newx-1][y]==player)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+
+            if(dia_LUP != 0) //check there are continuous 4 or 5 chesses in (\) or not
+            {
+                int i=2; //check the right-down way 
+                int newx=x+i;
+                int newy=y+i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==player) //4 cont. chesses
+                    {
+                        if(board[newx+1][newy+1]==player) //5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int i=-2; //check the right-up way 
+                int newx=x+i;
+                int newy=y+i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==player) //4 cont. chesses
+                    {
+                        if(board[newx-1][newy-1]==player) //5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+
+            if(dia_RUP != 0) //check there are continuous 4 or 5 chesses in (/) or not
+            {
+                int i=2; //check the left-down way 
+                int newx=x+i;
+                int newy=y-i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==player) //4 cont. chesses
+                    {
+                        if(board[newx+1][newy-1]==player) //5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int i=-2;
+                int newx=x+i;
+                int newy=y-i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==player)
+                    {
+                        if(board[newx-1][newy+1]==player)
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+        }
     }
+    state_player.value = val_3 + val_4 + val_5;
+
+    //evaluate the state of opponent
+    int count=0,val_3=0,val_4=0,val_5=0;
+    int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
+
 }
 
 
