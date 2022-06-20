@@ -21,7 +21,7 @@ struct Move
 
 int player;
 int opponent;
-const int SIZE = 3;
+const int SIZE = 15;
 array<array<int, SIZE>, SIZE> board;
 Move get_state (int x,int y);
 Move minimax (int x,int y);
@@ -59,7 +59,7 @@ Move get_state(int x,int y)
 {
     int count=0,val_3=0,val_4=0,val_5=0;
     int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
-    Move state_player, state_opponent;
+    Move state_player, state_opponent,nextstate;
 
     if(board[x][y]==player)
     {
@@ -549,6 +549,9 @@ Move get_state(int x,int y)
         }
     }
     state_opponent.value = val_4 + val_5;
+
+    nextstate.value = state_player.value - state_opponent.value;
+    return nextstate;
 }
 
 
