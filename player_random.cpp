@@ -47,8 +47,8 @@ void write_valid_spot(ofstream& fout) {
         if (board[x][y] == EMPTY) 
         {
             fout << x << " " << y << endl;
-            Move minimax(x,y);
-            cout<<minimax.row<<" "<<minimax.col<<'\n';
+            minimax(x,y);
+            cout<<minimax(x,y).row<<" "<<minimax(x,y).col<<'\n';
             // Remember to flush the output to ensure the last action is written to file.
             fout.flush();
         }
