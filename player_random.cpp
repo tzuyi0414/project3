@@ -303,10 +303,252 @@ Move get_state(int x,int y)
     }
     state_player.value = val_3 + val_4 + val_5;
 
+
     //evaluate the state of opponent
     int count=0,val_3=0,val_4=0,val_5=0;
     int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
 
+    if(board[x][y] ==opponent)
+    {
+        count=0;
+        for(int j=-1;j<=1;j++)//check continuous chesses of row
+        {
+            int newy=y+j;
+
+            if(legal_position(x,newy))
+            {
+                if(board[x][newy]==opponent)
+                    count++;
+                else
+                    count=0;
+            }
+        }
+        if(count==3)
+            row_tmp=1;
+        
+        count=0;
+        for(int i=-1;i<=1;i++)//check continuous chesses of column
+        {
+            int newx=x+i;
+            if(legal_position(newx,y))
+            {
+                if(board[newx][y]==opponent)
+                    count++;
+                else
+                    count=0;
+            }
+        }
+        if(count==3)
+            col_tmp=1;
+
+        count=0;
+        for(int i=-1;i<=1;i++)//check continuous chesses of diag(\)
+        {
+            int newx=x+i;
+            int newy=y+i;
+            
+            if(legal_position(newx,newy))
+            {
+                if(board[newx][newy]==opponent)
+                    count++;
+                else 
+                    count=0;
+            }
+        }
+        if(count==3)
+            dia_LUP=1;
+
+        count=0;
+        for(int i=-1;i<=1;i++)//check continuous chesses of diag(/)
+        {
+            int newx=x+i;
+            int newy=y-i;
+            
+            if(legal_position(newx,newy))
+            {
+                if(board[newx][newy]==opponent)
+                    count++;
+                else 
+                    count=0;
+            }
+        }
+        if(count==3)
+            dia_RUP=1;
+
+        val_3 += row_tmp + col_tmp + dia_LUP + dia_RUP;
+
+        if(val_3 != 0)
+        {
+            if(row_tmp != 0) //check there are continuous 4 or 5 chesses in row or not
+            {
+                int j=1; //check the right way of the row
+                int newy=y+j;
+                if(legal_position(x,newy))
+                {
+                    if(board[x][newy]==opponent)  //4 cont. chesses
+                    {
+                        if(board[x][newy+1]==opponent)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int j=-1;   //check the left way of the row
+                int newy=y+j;
+                if(legal_position(x,newy))
+                {
+                    if(board[x][newy]==opponent)  //4 cont. chesses
+                    {
+                        if(board[x][newy-1]==opponent)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+
+            if(col_tmp != 0) //check there are continuous 4 or 5 chesses in column or not
+            {
+                int i=1; //check the right way of the col
+                int newx=x+i;
+                if(legal_position(newx,y))
+                {
+                    if(board[newx][y]==opponent)  //4 cont. chesses
+                    {
+                        if(board[newx+1][y]==opponent)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int i=-1;   //check the left way of the row
+                int newx=x+i;
+                if(legal_position(newx,y))
+                {
+                    if(board[newx][y]==opponent)  //4 cont. chesses
+                    {
+                        if(board[newx-1][y]==opponent)//5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+
+            if(dia_LUP != 0) //check there are continuous 4 or 5 chesses in (\) or not
+            {
+                int i=2; //check the right-down way 
+                int newx=x+i;
+                int newy=y+i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==opponent) //4 cont. chesses
+                    {
+                        if(board[newx+1][newy+1]==opponent) //5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int i=-2; //check the right-up way 
+                int newx=x+i;
+                int newy=y+i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==opponent) //4 cont. chesses
+                    {
+                        if(board[newx-1][newy-1]==opponent) //5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+
+            if(dia_RUP != 0) //check there are continuous 4 or 5 chesses in (/) or not
+            {
+                int i=2; //check the left-down way 
+                int newx=x+i;
+                int newy=y-i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==opponent) //4 cont. chesses
+                    {
+                        if(board[newx+1][newy-1]==opponent) //5 cont. chesses
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+
+                int i=-2;
+                int newx=x+i;
+                int newy=y-i;
+                if(legal_position(newx,newy))
+                {
+                    if(board[newx][newy]==opponent)
+                    {
+                        if(board[newx-1][newy+1]==opponent)
+                        {
+                            val_5++;
+                            val_3--;
+                        }
+                        else
+                        {
+                            val_4++;
+                            val_3--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    state_opponent.value = val_4 + val_5;
 }
 
 
