@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <array>
+#include <vector>
 using namespace std;
 #define MIN -1000
 #define MAX 1000
@@ -16,13 +17,15 @@ enum SPOT_STATE {
 
 struct Move
 {
-    int row, col;
+    int row, col,value;
 };
 
 int player;
 int opponent;
 const int SIZE = 3;
 array<array<int, SIZE>, SIZE> board;
+Move get_state (int x,int y);
+Move minimax (int x,int y);
 
 void read_board(ifstream& fin) {
     fin >> player;
@@ -41,21 +44,28 @@ void write_valid_spot(ofstream& fout) {
         // Choose a random spot.
         int x = (rand() % SIZE);
         int y = (rand() % SIZE);
-        if (board[x][y] == EMPTY) {
-            fout << x << " " << y << std::endl;
+        if (board[x][y] == EMPTY) 
+        {
+            fout << x << " " << y << endl;
+            Move minimax(x,y);
+            cout<<minimax.row<<" "<<minimax.col<<'\n';
             // Remember to flush the output to ensure the last action is written to file.
             fout.flush();
         }
     }
 }
 
-int value_function_player(int x,int y)
+Move get_state(int x,int y)
 {
-    int count=0;
+    int count=0,val_player=0;
     int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
+    Move bestMove;
+    bestMove.col=-1;
+    bestMove.row=-1;
+
     if(board[x][y]==player)
     {
-        for(int i=-2;i<=2;i++)//check continuous chesses of row
+        for(int i=-2;i<=2;i++)//check continuous chesses of col
         {
             int newx=x+i;
 
@@ -64,7 +74,11 @@ int value_function_player(int x,int y)
                 if(board[newx][y]==player)
                     count++;
                 else
+                {
+                    if(count>=3)
+                        int tmp=1;
                     count=0;
+                }
             }
         }
         if(count>=3)
@@ -72,7 +86,7 @@ int value_function_player(int x,int y)
 
         for(int j=-2;j<=2;j++)//check continuous chesses of column
         {
-            int newy=x+j;
+            int newy=y+j;
             count=0;
 
             if(newy>=0 && newy<15)
@@ -118,47 +132,11 @@ int value_function_player(int x,int y)
         if(count>=3)
             dia_RUP=1;
 
-        int val_player = row_tmp + col_tmp + dia_LUP + dia_RUP;
+        val_player = row_tmp + col_tmp + dia_LUP + dia_RUP;
+        return bestMove;
     }
 }
 
-// This will return the best possible move for the player
-/*Move search_BestMove(int board[SIZE][SIZE])
-{
-    int bestvalue=MIN;
-    Move bestMove;
-    bestMove.row=-1;
-    bestMove.col=-1;
- 
-    // Traverse all cells, evaluate minimax function for
-    // all empty cells. And return the cell with optimal
-    // value.
-    for (int i=0;i<SIZE;i++)
-    {
-        for (int j=0;j<SIZE;j++)
-        {
-            if (board[i][j]==EMPTY)
-            {
-                board[i][j]=player;// move
- 
-                // compute evaluation function for this move.
-                int moveVal=minimax(i,j);
-                board[i][j]=EMPTY;
- 
-                // If the value of the current move is
-                // more than the best value, then update
-                // best/
-                if (moveVal>bestvalue)
-                {
-                    bestMove.row=i;
-                    bestMove.col=j;
-                    bestvalue=moveVal;
-                }
-            }
-        }
-    } 
-    return bestMove;
-}*/
 
 //judge whether the player or AI has legal position
 bool legal_position(int x,int y)
@@ -173,55 +151,59 @@ bool legal_position(int x,int y)
 }
 
 int depth=SIZE;
-int minimax(int x,int y)
+Move minimax(int x,int y)
 {
-    int bestscore=0,alpha=0,beta=0;
+    int alpha=0,beta=0;
+    Move best;
 
     if(depth==0)
-        return bestscore;
+        return best;
     else
     {
         if(board[x][y]==player)
         {
-            bestscore=MIN;
+            best.value=MIN;
             for(int i=0;i<SIZE;i++)
             {
                 for(int j=0;j<SIZE;j++)
                 {
-                    if(board[i][j]==EMPTY)
+                    if(legal_position(i,j))
                     {
                         board[i][j]=player;
+                        get_state(i,j);
                         depth-1;
-                        bestscore=max(bestscore,minimax(i,j));
+                        best.value=max(best.value,minimax(i,j).value);
                         board[i][j]=EMPTY;
-                        alpha=max(alpha,bestscore);
+                        alpha=max(alpha,best.value);
+                        
                         if(alpha>=beta)
                             break;
                     }
                 }
             }
-            return bestscore;
+            return best;
         }
         else
         {
-            bestscore=MAX;
+            best.value=MAX;
             for(int i=0;i<SIZE;i++)
             {
                 for(int j=0;j<SIZE;j++)
                 {
-                    if(board[i][j]==EMPTY)
+                    if(legal_position(i,j))
                     {
                         board[i][j]=(3-player);//
+                        get_state(i,j);
                         depth-1;
-                        bestscore=min(bestscore,minimax(i,j));
+                        best.value=min(best.value,minimax(i,j).value);
                         board[i][j]=EMPTY;
-                        beta=min(beta,bestscore);
+                        beta=min(beta,best.value);
                         if(beta<=alpha)
                             break;
                     }
                 }
             }
-            return bestscore;
+            return best;
         }
     }
 }
