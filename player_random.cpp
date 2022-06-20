@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <array>
-#include <vector>
 using namespace std;
 #define MIN -1000
 #define MAX 1000
@@ -26,6 +25,7 @@ const int SIZE = 3;
 array<array<int, SIZE>, SIZE> board;
 Move get_state (int x,int y);
 Move minimax (int x,int y);
+bool legal_position(int x,int y);
 
 void read_board(ifstream& fin) {
     fin >> player;
@@ -57,7 +57,7 @@ void write_valid_spot(ofstream& fout) {
 
 Move get_state(int x,int y)
 {
-    int count=0,val_player=0;
+    int count=0,val_3;
     int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
     Move bestMove;
     bestMove.col=-1;
@@ -65,31 +65,12 @@ Move get_state(int x,int y)
 
     if(board[x][y]==player)
     {
-        for(int i=-2;i<=2;i++)//check continuous chesses of col
-        {
-            int newx=x+i;
-
-            if(newx>=0 && newx<15)
-            {
-                if(board[newx][y]==player)
-                    count++;
-                else
-                {
-                    if(count>=3)
-                        int tmp=1;
-                    count=0;
-                }
-            }
-        }
-        if(count>=3)
-            row_tmp=1;
-
-        for(int j=-2;j<=2;j++)//check continuous chesses of column
+        count=0;
+        for(int j=-1;j<=1;j++)//check continuous chesses of row
         {
             int newy=y+j;
-            count=0;
 
-            if(newy>=0 && newy<15)
+            if(legal_position(x,newy))
             {
                 if(board[x][newy]==player)
                     count++;
@@ -97,15 +78,31 @@ Move get_state(int x,int y)
                     count=0;
             }
         }
-        if(count>=3)
+        if(count==3)
+            row_tmp=1;
+        
+        count=0;
+        for(int i=-1;i<=1;i++)//check continuous chesses of column
+        {
+            int newx=x+i;
+            if(legal_position(newx,y))
+            {
+                if(board[newx][y]==player)
+                    count++;
+                else
+                    count=0;
+            }
+        }
+        if(count==3)
             col_tmp=1;
 
-        for(int i=-2;i<=2;i++)//check continuous chesses of diag(\)
+        count=0;
+        for(int i=-1;i<=1;i++)//check continuous chesses of diag(\)
         {
             int newx=x+i;
             int newy=y+i;
-            int count=0;
-            if(newx>=0 && newx<15 && newy>=0 && newy<15)
+            
+            if(legal_position(newx,newy))
             {
                 if(board[newx][newy]==player)
                     count++;
@@ -113,15 +110,16 @@ Move get_state(int x,int y)
                     count=0;
             }
         }
-        if(count>=3)
+        if(count==3)
             dia_LUP=1;
 
-        for(int i=-2;i<=2;i++)//check continuous chesses of diag(/)
+        count=0;
+        for(int i=-1;i<=1;i++)//check continuous chesses of diag(/)
         {
             int newx=x+i;
             int newy=y-i;
-            int count=0;
-            if(newx>=0 && newx<15 && newy>=0 && newy<15)
+            
+            if(legal_position(newx,newy))
             {
                 if(board[newx][newy]==player)
                     count++;
@@ -129,11 +127,12 @@ Move get_state(int x,int y)
                     count=0;
             }
         }
-        if(count>=3)
+        if(count==3)
             dia_RUP=1;
 
-        val_player = row_tmp + col_tmp + dia_LUP + dia_RUP;
-        return bestMove;
+        val_3 += row_tmp + col_tmp + dia_LUP + dia_RUP;
+
+        
     }
 }
 
