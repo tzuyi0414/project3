@@ -49,10 +49,10 @@ void write_valid_spot(ofstream& fout) {
     }
 }
 
-int value_function(int x,int y)
+int value_function_player(int x,int y)
 {
     int count=0;
-    int row_tmp=0,col_tmp=0;
+    int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
     if(board[x][y]==player)
     {
         for(int i=-2;i<=2;i++)//check continuous chesses of row
@@ -86,9 +86,39 @@ int value_function(int x,int y)
         if(count>=3)
             col_tmp=1;
 
+        for(int i=-2;i<=2;i++)//check continuous chesses of diag(\)
+        {
+            int newx=x+i;
+            int newy=y+i;
+            int count=0;
+            if(newx>=0 && newx<15 && newy>=0 && newy<15)
+            {
+                if(board[newx][newy]==player)
+                    count++;
+                else 
+                    count=0;
+            }
+        }
+        if(count>=3)
+            dia_LUP=1;
 
-        
+        for(int i=-2;i<=2;i++)//check continuous chesses of diag(/)
+        {
+            int newx=x+i;
+            int newy=y-i;
+            int count=0;
+            if(newx>=0 && newx<15 && newy>=0 && newy<15)
+            {
+                if(board[newx][newy]==player)
+                    count++;
+                else 
+                    count=0;
+            }
+        }
+        if(count>=3)
+            dia_RUP=1;
 
+        int val_player = row_tmp + col_tmp + dia_LUP + dia_RUP;
     }
 }
 
