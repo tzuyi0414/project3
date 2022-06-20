@@ -5,8 +5,8 @@
 #include <ctime>
 #include <array>
 using namespace std;
-#define MIN -10000
-#define MAX 10000
+#define MIN -1000
+#define MAX 1000
 
 enum SPOT_STATE {
     EMPTY = 0,
@@ -49,8 +49,51 @@ void write_valid_spot(ofstream& fout) {
     }
 }
 
+int value_function(int x,int y)
+{
+    int count=0;
+    int row_tmp=0,col_tmp=0;
+    if(board[x][y]==player)
+    {
+        for(int i=-2;i<=2;i++)//check continuous chesses of row
+        {
+            int newx=x+i;
+
+            if(newx>=0 && newx<15)
+            {
+                if(board[newx][y]==player)
+                    count++;
+                else
+                    count=0;
+            }
+        }
+        if(count>=3)
+            row_tmp=1;
+
+        for(int j=-2;j<=2;j++)//check continuous chesses of column
+        {
+            int newy=x+j;
+            count=0;
+
+            if(newy>=0 && newy<15)
+            {
+                if(board[x][newy]==player)
+                    count++;
+                else
+                    count=0;
+            }
+        }
+        if(count>=3)
+            col_tmp=1;
+
+
+        
+
+    }
+}
+
 // This will return the best possible move for the player
-Move search_BestMove(int board[SIZE][SIZE])
+/*Move search_BestMove(int board[SIZE][SIZE])
 {
     int bestvalue=MIN;
     Move bestMove;
@@ -60,9 +103,9 @@ Move search_BestMove(int board[SIZE][SIZE])
     // Traverse all cells, evaluate minimax function for
     // all empty cells. And return the cell with optimal
     // value.
-    for (int i=0;i<3;i++)
+    for (int i=0;i<SIZE;i++)
     {
-        for (int j=0;j<3;j++)
+        for (int j=0;j<SIZE;j++)
         {
             if (board[i][j]==EMPTY)
             {
@@ -85,7 +128,7 @@ Move search_BestMove(int board[SIZE][SIZE])
         }
     } 
     return bestMove;
-}
+}*/
 
 //judge whether the player or AI has legal position
 bool legal_position(int x,int y)
