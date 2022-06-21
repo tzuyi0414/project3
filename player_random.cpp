@@ -53,6 +53,7 @@ int player;
 int opponent;
 const int SIZE = 15;
 array<array<int, SIZE>, SIZE> board;
+array<array<int, SIZE>, SIZE> flag;
 
 int flag=0;
 int get_state (int x,int y);
@@ -80,7 +81,9 @@ void write_valid_spot(ofstream& fout) {
             {
                 if(board[i][j]==EMPTY)
                 {
-                    flag=1;
+                    i=m;
+                    j=n;
+                    
                 }
             }
         }
