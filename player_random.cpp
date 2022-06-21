@@ -8,7 +8,8 @@ using namespace std;
 #define MIN -1000
 #define MAX 1000
 
-enum SPOT_STATE {
+enum SPOT_STATE 
+{
     EMPTY = 0,
     BLACK = 1,
     WHITE = 2
@@ -16,16 +17,20 @@ enum SPOT_STATE {
 
 struct Move
 {
-    int row, col,value;
+    int row, col,value,alpha,beta,user;
+    array<array<int, SIZE>, SIZE> chess_new;
 };
 
 int player;
 int opponent;
 const int SIZE = 15;
 array<array<int, SIZE>, SIZE> board;
+
 Move get_state (int x,int y);
 Move minimax (int x,int y);
 bool legal_position(int x,int y);
+void add_chess(int x,int y,int user,Move temp);
+
 
 void read_board(ifstream& fin) {
     fin >> player;
@@ -42,8 +47,8 @@ void write_valid_spot(ofstream& fout) {
     // Keep updating the output until getting killed.
     while(true) {
         // Choose a random spot.
-        int x = (rand() % SIZE);
-        int y = (rand() % SIZE);
+        int x = m;//(rand() % SIZE);
+        int y = n;//(rand() % SIZE);
         if (board[x][y] == EMPTY) 
         {
             fout << x << " " << y << endl;
@@ -53,6 +58,12 @@ void write_valid_spot(ofstream& fout) {
             fout.flush();
         }
     }
+}
+
+Move base0(int x,int y)
+{
+    if(board[x][y]==player)
+    ;
 }
 
 Move get_state(int x,int y)
@@ -302,6 +313,16 @@ Move get_state(int x,int y)
         }
     }
     state_player.value = val_3 + val_4 + val_5;
+    int tempt=state_player.value;
+    if(state_player.value>tempt)
+    {
+        state_player.alpha=state_player.value;
+        state_player.chess_new=board;
+    }
+    else if(state_player.value<tempt)
+    {
+        state_player.beta=state_player.value;
+    }
 
 
     //evaluate the state of opponent
@@ -555,6 +576,15 @@ Move get_state(int x,int y)
 }
 
 
+void add_chess(int x,int y,int user,Move temp)
+{
+    if(legal_position(x,y))
+    {
+        temp.chess_new[x][y]=user;
+        user=3-user;
+    }
+}
+
 //judge whether the player or AI has legal position
 bool legal_position(int x,int y)
 {
@@ -566,20 +596,21 @@ bool legal_position(int x,int y)
 
     else return true;
 }
-
-int depth=SIZE;
-Move minimax(int x,int y)
+int m, n;
+int depth=5;
+int minimax(int x,int y,int d,int user,Move last)
 {
-    int alpha=0,beta=0;
-    Move best={best.col=-1,best.row=-1,best.value=0};
-
-    if(depth==0)
-        return best;
+    //int alpha=0,beta=0;
+    //Move best={best.col=-1,best.row=-1,best.value=0};//initialize
+    Move temp;//initialize
+    add_chess(x,y,user,last);
+    if(d==0)
+        return temp.value;
     else
     {
-        if(board[x][y]==player)
+        if(user==player)
         {
-            best.value=MIN;
+            temp.value=MIN;
             for(int i=0;i<SIZE;i++)
             {
                 for(int j=0;j<SIZE;j++)
@@ -587,40 +618,42 @@ Move minimax(int x,int y)
                     if(legal_position(i,j))
                     {
                         board[i][j]=player;
-                        get_state(i,j);
-                        depth=depth-1;
-                        best.value=max(best.value,minimax(i,j).value);
+                        temp=last;
+                        temp.value=max(temp.value,minimax(i,j, d-1,opponent,temp));
                         board[i][j]=EMPTY;
-                        alpha=max(alpha,best.value);
-                        
-                        if(alpha>=beta)
+                        if(temp.value>temp.alpha && d==depth)
+                        {
+                            m = i;
+                            n = j;
+                        }
+                        temp.alpha=max(temp.alpha,temp.value);      
+                        if(temp.alpha>=temp.beta)
                             break;
                     }
                 }
             }
-            return best;
+            return temp.value;
         }
         else
         {
-            best.value=MAX;
+            temp.value=MAX;
             for(int i=0;i<SIZE;i++)
             {
                 for(int j=0;j<SIZE;j++)
                 {
                     if(legal_position(i,j))
                     {
-                        board[i][j]=(3-player);//
-                        get_state(i,j);
-                        depth=depth-1;
-                        best.value=min(best.value,minimax(i,j).value);
+                        board[i][j]=(3-player);
+                        temp=last;//加點,=
+                        temp.value=min(temp.value,minimax(i,j,d-1,player,temp));
                         board[i][j]=EMPTY;
-                        beta=min(beta,best.value);
-                        if(beta<=alpha)
+                        temp.beta=min(temp.beta,temp.value);
+                        if(temp.beta<=temp.alpha)
                             break;
                     }
                 }
             }
-            return best;
+            return temp.value;
         }
     }
 }
