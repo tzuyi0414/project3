@@ -4,9 +4,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <array>
+#include<limits.h>
 using namespace std;
-#define MIN -1000
-#define MAX 1000
+#define MIN INT_MIN
+#define MAX INT_MAX
 
 enum SPOT_STATE 
 {
@@ -16,21 +17,47 @@ enum SPOT_STATE
 };
 
 struct Move
-{
-    int row, col,value,alpha,beta,user;
+{   Move() {
+        for(int i = 0; i < SIZE; i++) 
+        {
+            for(int j = 0; j < SIZE; j++) 
+            {
+                chess_new[i][j] = board[i][j];
+            }
+        }
+        value=0;
+        alpha=INT_MIN;
+        beta=INT_MAX;
+        user=player;
+    }
+    Move(int x,int y,Move temp)
+    {
+        for(int i = 0; i < SIZE; i++) 
+        {
+            for(int j = 0; j < SIZE; j++) 
+            {
+                chess_new[i][j] = temp.chess_new[i][j];
+            }
+        }
+        chess_new[x][y] = temp.user;
+        user=3-temp.user;
+        alpha=INT_MIN;
+        beta=INT_MAX;
+        value=0;
+    }
+    int value,alpha,beta,user;
     array<array<int, SIZE>, SIZE> chess_new;
 };
-
+int m,n;
 int player;
 int opponent;
 const int SIZE = 15;
 array<array<int, SIZE>, SIZE> board;
 
-Move get_state (int x,int y);
+int flag=0;
+int get_state (int x,int y);
 Move minimax (int x,int y);
 bool legal_position(int x,int y);
-void add_chess(int x,int y,int user,Move temp);
-
 
 void read_board(ifstream& fin) {
     fin >> player;
@@ -47,37 +74,44 @@ void write_valid_spot(ofstream& fout) {
     // Keep updating the output until getting killed.
     while(true) {
         // Choose a random spot.
+        for(int i=0;i<SIZE;i++)
+        {
+            for(int j=0;j<SIZE;j++)
+            {
+                if(board[i][j]==EMPTY)
+                {
+                    flag=1;
+                }
+            }
+        }
         int x = m;//(rand() % SIZE);
         int y = n;//(rand() % SIZE);
         if (board[x][y] == EMPTY) 
         {
             fout << x << " " << y << endl;
-            minimax(x,y);
-            cout<<minimax(x,y).row<<" "<<minimax(x,y).col<<'\n';
+            
             // Remember to flush the output to ensure the last action is written to file.
             fout.flush();
         }
     }
 }
 
-Move base0(int x,int y)
+/*int get_state(Move cur)
 {
-    if(board[x][y]==player)
-    ;
-}
-
-Move get_state(int x,int y)
-{
+    int p=0,q=0;
+    cur.chess_new[p][q];
     int count=0,val_3=0,val_4=0,val_5=0,i=0,j=0,newx=0,newy=0;
     int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
-    Move state_player, state_opponent,nextstate;
-
-    if(board[x][y]==player)
+    Move state_player;
+    Move state_opponent;
+    Move nextstate;
+    
+    if(cur.chess_new[p][q]==cur.user)
     {
         count=0;
         for(j=-1;j<=1;j++)//check continuous chesses of row
         {
-            newy=y+j;
+            =y+j;
 
             if(legal_position(x,newy))
             {
@@ -313,16 +347,11 @@ Move get_state(int x,int y)
         }
     }
     state_player.value = val_3 + val_4 + val_5;
-    int tempt=state_player.value;
-    if(state_player.value>tempt)
-    {
+    if(state_player.value>state_player.alpha)
         state_player.alpha=state_player.value;
-        state_player.chess_new=board;
-    }
-    else if(state_player.value<tempt)
-    {
+    
+    else if(state_player.value<state_player.beta)
         state_player.beta=state_player.value;
-    }
 
 
     //evaluate the state of opponent
@@ -570,20 +599,16 @@ Move get_state(int x,int y)
         }
     }
     state_opponent.value = val_4 + val_5;
+    if(state_player.value>state_player.alpha)
+        state_player.alpha=state_player.value;
+    
+    else if(state_player.value<state_player.beta)
+        state_player.beta=state_player.value;
 
-    nextstate.value = state_player.value - state_opponent.value;
-    return nextstate;
-}
+    //nextstate.value = state_player.value - state_opponent.value;
 
-
-void add_chess(int x,int y,int user,Move temp)
-{
-    if(legal_position(x,y))
-    {
-        temp.chess_new[x][y]=user;
-        user=3-user;
-    }
-}
+    return nextstate.value;
+}*/
 
 //judge whether the player or AI has legal position
 bool legal_position(int x,int y)
@@ -596,16 +621,20 @@ bool legal_position(int x,int y)
 
     else return true;
 }
-int m, n;
+
 int depth=5;
+
 int minimax(int x,int y,int d,int user,Move last)
 {
     //int alpha=0,beta=0;
     //Move best={best.col=-1,best.row=-1,best.value=0};//initialize
-    Move temp;//initialize
-    add_chess(x,y,user,last);
+    Move temp = Move(x, y, last);//initialize
+    
     if(d==0)
-        return temp.value;
+    {
+        //return get_state(temp);
+    }
+    
     else
     {
         if(user==player)
@@ -618,7 +647,7 @@ int minimax(int x,int y,int d,int user,Move last)
                     if(legal_position(i,j))
                     {
                         board[i][j]=player;
-                        temp=last;
+                        temp = Move(i,j,last);
                         temp.value=max(temp.value,minimax(i,j, d-1,opponent,temp));
                         board[i][j]=EMPTY;
                         if(temp.value>temp.alpha && d==depth)
@@ -644,7 +673,7 @@ int minimax(int x,int y,int d,int user,Move last)
                     if(legal_position(i,j))
                     {
                         board[i][j]=(3-player);
-                        temp=last;//加點,=
+                        temp = Move(i,j,last);
                         temp.value=min(temp.value,minimax(i,j,d-1,player,temp));
                         board[i][j]=EMPTY;
                         temp.beta=min(temp.beta,temp.value);
