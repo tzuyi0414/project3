@@ -57,16 +57,16 @@ void write_valid_spot(ofstream& fout) {
 
 Move get_state(int x,int y)
 {
-    int count=0,val_3=0,val_4=0,val_5=0;
+    int count=0,val_3=0,val_4=0,val_5=0,i=0,j=0,newx=0,newy=0;
     int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
     Move state_player, state_opponent,nextstate;
 
     if(board[x][y]==player)
     {
         count=0;
-        for(int j=-1;j<=1;j++)//check continuous chesses of row
+        for(j=-1;j<=1;j++)//check continuous chesses of row
         {
-            int newy=y+j;
+            newy=y+j;
 
             if(legal_position(x,newy))
             {
@@ -80,9 +80,9 @@ Move get_state(int x,int y)
             row_tmp=1;
         
         count=0;
-        for(int i=-1;i<=1;i++)//check continuous chesses of column
+        for(i=-1;i<=1;i++)//check continuous chesses of column
         {
-            int newx=x+i;
+            newx=x+i;
             if(legal_position(newx,y))
             {
                 if(board[newx][y]==player)
@@ -95,10 +95,10 @@ Move get_state(int x,int y)
             col_tmp=1;
 
         count=0;
-        for(int i=-1;i<=1;i++)//check continuous chesses of diag(\)
+        for(i=-1;i<=1;i++)//check continuous chesses of diag(\)
         {
-            int newx=x+i;
-            int newy=y+i;
+            newx=x+i;
+            newy=y+i;
             
             if(legal_position(newx,newy))
             {
@@ -112,10 +112,10 @@ Move get_state(int x,int y)
             dia_LUP=1;
 
         count=0;
-        for(int i=-1;i<=1;i++)//check continuous chesses of diag(/)
+        for(i=-1;i<=1;i++)//check continuous chesses of diag(/)
         {
-            int newx=x+i;
-            int newy=y-i;
+            newx=x+i;
+            newy=y-i;
             
             if(legal_position(newx,newy))
             {
@@ -134,8 +134,8 @@ Move get_state(int x,int y)
         {
             if(row_tmp != 0) //check there are continuous 4 or 5 chesses in row or not
             {
-                int j=1; //check the right way of the row
-                int newy=y+j;
+                j=1; //check the right way of the row
+                newy=y+j;
                 if(legal_position(x,newy))
                 {
                     if(board[x][newy]==player)  //4 cont. chesses
@@ -153,8 +153,8 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int j=-1;   //check the left way of the row
-                int newy=y+j;
+                j=-1;   //check the left way of the row
+                newy=y+j;
                 if(legal_position(x,newy))
                 {
                     if(board[x][newy]==player)  //4 cont. chesses
@@ -175,8 +175,8 @@ Move get_state(int x,int y)
 
             if(col_tmp != 0) //check there are continuous 4 or 5 chesses in column or not
             {
-                int i=1; //check the right way of the col
-                int newx=x+i;
+                i=1; //check the right way of the col
+                newx=x+i;
                 if(legal_position(newx,y))
                 {
                     if(board[newx][y]==player)  //4 cont. chesses
@@ -194,8 +194,8 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int i=-1;   //check the left way of the row
-                int newx=x+i;
+                i=-1;   //check the left way of the row
+                newx=x+i;
                 if(legal_position(newx,y))
                 {
                     if(board[newx][y]==player)  //4 cont. chesses
@@ -216,9 +216,9 @@ Move get_state(int x,int y)
 
             if(dia_LUP != 0) //check there are continuous 4 or 5 chesses in (\) or not
             {
-                int i=2; //check the right-down way 
-                int newx=x+i;
-                int newy=y+i;
+                i=2; //check the right-down way 
+                newx=x+i;
+                newy=y+i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==player) //4 cont. chesses
@@ -236,9 +236,9 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int i=-2; //check the right-up way 
-                int newx=x+i;
-                int newy=y+i;
+                i=-2; //check the right-up way 
+                newx=x+i;
+                newy=y+i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==player) //4 cont. chesses
@@ -259,9 +259,9 @@ Move get_state(int x,int y)
 
             if(dia_RUP != 0) //check there are continuous 4 or 5 chesses in (/) or not
             {
-                int i=2; //check the left-down way 
-                int newx=x+i;
-                int newy=y-i;
+                i=2; //check the left-down way 
+                newx=x+i;
+                newy=y-i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==player) //4 cont. chesses
@@ -279,9 +279,9 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int i=-2;
-                int newx=x+i;
-                int newy=y-i;
+                i=-2;
+                newx=x+i;
+                newy=y-i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==player)
@@ -305,15 +305,15 @@ Move get_state(int x,int y)
 
 
     //evaluate the state of opponent
-    int count=0,val_3=0,val_4=0,val_5=0;
-    int row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
+    count=0,val_3=0,val_4=0,val_5=0;
+    row_tmp=0,col_tmp=0,dia_LUP=0,dia_RUP=0;
 
     if(board[x][y] ==opponent)
     {
         count=0;
-        for(int j=-1;j<=1;j++)//check continuous chesses of row
+        for(j=-1;j<=1;j++)//check continuous chesses of row
         {
-            int newy=y+j;
+            newy=y+j;
 
             if(legal_position(x,newy))
             {
@@ -327,9 +327,9 @@ Move get_state(int x,int y)
             row_tmp=1;
         
         count=0;
-        for(int i=-1;i<=1;i++)//check continuous chesses of column
+        for(i=-1;i<=1;i++)//check continuous chesses of column
         {
-            int newx=x+i;
+            newx=x+i;
             if(legal_position(newx,y))
             {
                 if(board[newx][y]==opponent)
@@ -342,10 +342,10 @@ Move get_state(int x,int y)
             col_tmp=1;
 
         count=0;
-        for(int i=-1;i<=1;i++)//check continuous chesses of diag(\)
+        for(i=-1;i<=1;i++)//check continuous chesses of diag(\)
         {
-            int newx=x+i;
-            int newy=y+i;
+            newx=x+i;
+            newy=y+i;
             
             if(legal_position(newx,newy))
             {
@@ -359,10 +359,10 @@ Move get_state(int x,int y)
             dia_LUP=1;
 
         count=0;
-        for(int i=-1;i<=1;i++)//check continuous chesses of diag(/)
+        for(i=-1;i<=1;i++)//check continuous chesses of diag(/)
         {
-            int newx=x+i;
-            int newy=y-i;
+            newx=x+i;
+            newy=y-i;
             
             if(legal_position(newx,newy))
             {
@@ -381,8 +381,8 @@ Move get_state(int x,int y)
         {
             if(row_tmp != 0) //check there are continuous 4 or 5 chesses in row or not
             {
-                int j=1; //check the right way of the row
-                int newy=y+j;
+                j=1; //check the right way of the row
+                newy=y+j;
                 if(legal_position(x,newy))
                 {
                     if(board[x][newy]==opponent)  //4 cont. chesses
@@ -400,8 +400,8 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int j=-1;   //check the left way of the row
-                int newy=y+j;
+                j=-1;   //check the left way of the row
+                newy=y+j;
                 if(legal_position(x,newy))
                 {
                     if(board[x][newy]==opponent)  //4 cont. chesses
@@ -422,8 +422,8 @@ Move get_state(int x,int y)
 
             if(col_tmp != 0) //check there are continuous 4 or 5 chesses in column or not
             {
-                int i=1; //check the right way of the col
-                int newx=x+i;
+                i=1; //check the right way of the col
+                newx=x+i;
                 if(legal_position(newx,y))
                 {
                     if(board[newx][y]==opponent)  //4 cont. chesses
@@ -441,8 +441,8 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int i=-1;   //check the left way of the row
-                int newx=x+i;
+                i=-1;   //check the left way of the row
+                newx=x+i;
                 if(legal_position(newx,y))
                 {
                     if(board[newx][y]==opponent)  //4 cont. chesses
@@ -463,9 +463,9 @@ Move get_state(int x,int y)
 
             if(dia_LUP != 0) //check there are continuous 4 or 5 chesses in (\) or not
             {
-                int i=2; //check the right-down way 
-                int newx=x+i;
-                int newy=y+i;
+                i=2; //check the right-down way 
+                newx=x+i;
+                newy=y+i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==opponent) //4 cont. chesses
@@ -483,9 +483,9 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int i=-2; //check the right-up way 
-                int newx=x+i;
-                int newy=y+i;
+                i=-2; //check the right-up way 
+                newx=x+i;
+                newy=y+i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==opponent) //4 cont. chesses
@@ -506,9 +506,9 @@ Move get_state(int x,int y)
 
             if(dia_RUP != 0) //check there are continuous 4 or 5 chesses in (/) or not
             {
-                int i=2; //check the left-down way 
-                int newx=x+i;
-                int newy=y-i;
+                i=2; //check the left-down way 
+                newx=x+i;
+                newy=y-i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==opponent) //4 cont. chesses
@@ -526,9 +526,9 @@ Move get_state(int x,int y)
                     }
                 }
 
-                int i=-2;
-                int newx=x+i;
-                int newy=y-i;
+                i=-2;
+                newx=x+i;
+                newy=y-i;
                 if(legal_position(newx,newy))
                 {
                     if(board[newx][newy]==opponent)
@@ -558,10 +558,10 @@ Move get_state(int x,int y)
 //judge whether the player or AI has legal position
 bool legal_position(int x,int y)
 {
-    if (x < 0 | x >= 15 | y < 0 | y >= 15)
+    if ((x < 0) | (x >= 15) | (y < 0) | (y >= 15))
         return false;
 
-    else if (board[x][y] == 1 | board[x][y] == 2)
+    else if ((board[x][y] == 1) | (board[x][y] == 2))
         return false;
 
     else return true;
@@ -571,7 +571,7 @@ int depth=SIZE;
 Move minimax(int x,int y)
 {
     int alpha=0,beta=0;
-    Move best;
+    Move best={best.col=-1,best.row=-1,best.value=0};
 
     if(depth==0)
         return best;
@@ -588,7 +588,7 @@ Move minimax(int x,int y)
                     {
                         board[i][j]=player;
                         get_state(i,j);
-                        depth-1;
+                        depth=depth-1;
                         best.value=max(best.value,minimax(i,j).value);
                         board[i][j]=EMPTY;
                         alpha=max(alpha,best.value);
@@ -611,7 +611,7 @@ Move minimax(int x,int y)
                     {
                         board[i][j]=(3-player);//
                         get_state(i,j);
-                        depth-1;
+                        depth=depth-1;
                         best.value=min(best.value,minimax(i,j).value);
                         board[i][j]=EMPTY;
                         beta=min(beta,best.value);
