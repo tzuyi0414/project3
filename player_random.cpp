@@ -9,6 +9,17 @@ using namespace std;
 #define MIN INT_MIN
 #define MAX INT_MAX
 
+int m,n;
+int player;
+int opponent;
+const int SIZE = 15;
+array<array<int, SIZE>, SIZE> board;
+int flag=0;
+int get_state (int x,int y);
+int minimax (int x,int y);
+bool legal_position(int x,int y);
+
+
 enum SPOT_STATE 
 {
     EMPTY = 0,
@@ -48,17 +59,6 @@ struct Move
     int value,alpha,beta,user;
     array<array<int, SIZE>, SIZE> chess_new;
 };
-int m,n;
-int player;
-int opponent;
-const int SIZE = 15;
-array<array<int, SIZE>, SIZE> board;
-array<array<int, SIZE>, SIZE> flag;
-
-int flag=0;
-int get_state (int x,int y);
-Move minimax (int x,int y);
-bool legal_position(int x,int y);
 
 void read_board(ifstream& fin) {
     fin >> player;
@@ -73,30 +73,47 @@ void write_valid_spot(ofstream& fout) {
     srand(time(NULL));
     //int x, y;
     // Keep updating the output until getting killed.
-    while(true) {
-        // Choose a random spot.
+    while(true)
+    {
+        flag = 0;
         for(int i=0;i<SIZE;i++)
         {
             for(int j=0;j<SIZE;j++)
             {
+            
                 if(board[i][j]==EMPTY)
                 {
-                    i=m;
-                    j=n;
-                    
+                    fout << i << " " << j << endl;
+                    flag=1;
+                    // Remember to flush the output to ensure the last action is written to file.
+                    fout.flush();
+                }
+            }
+            if(flag) break;
+        }
+    }
+    /*while(true) {
+        // Choose a random spot.
+       // int x = m;//(rand() % SIZE);
+        //int y = n;//(rand() % SIZE);
+        for(int i=0;i<SIZE;i++)
+        {
+            for(int j=0;j<SIZE;j++)
+            {
+                if (board[i][j] == EMPTY) 
+                {
+                    fout << i << " " << j << endl;
+                    flag=1;
+                    // Remember to flush the output to ensure the last action is written to file.
+                    fout.flush();
+                }
+                if(flag==1)
+                {
+                    flag=0;
                 }
             }
         }
-        int x = m;//(rand() % SIZE);
-        int y = n;//(rand() % SIZE);
-        if (board[x][y] == EMPTY) 
-        {
-            fout << x << " " << y << endl;
-            
-            // Remember to flush the output to ensure the last action is written to file.
-            fout.flush();
-        }
-    }
+    }*/
 }
 
 /*int get_state(Move cur)
@@ -636,6 +653,7 @@ int minimax(int x,int y,int d,int user,Move last)
     if(d==0)
     {
         //return get_state(temp);
+        return 0;
     }
     
     else
