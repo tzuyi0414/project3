@@ -589,7 +589,7 @@ Move minimax(int x,int y)
                         board[i][j]=player;
                         get_state(i,j);
                         depth-1;
-                        best.value=max(best.value,minimax(i,j).value);
+                        best.value=std::max(best.value,minimax(i,j).value);
                         board[i][j]=EMPTY;
                         alpha=max(alpha,best.value);
                         
@@ -612,7 +612,7 @@ Move minimax(int x,int y)
                         board[i][j]=(3-player);//
                         get_state(i,j);
                         depth-1;
-                        best.value=min(best.value,minimax(i,j).value);
+                        best.value=std::min(best.value,minimax(i,j).value);
                         board[i][j]=EMPTY;
                         beta=min(beta,best.value);
                         if(beta<=alpha)
